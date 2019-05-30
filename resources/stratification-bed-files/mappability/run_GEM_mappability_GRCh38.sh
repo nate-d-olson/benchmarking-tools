@@ -35,24 +35,31 @@ else
 	gem-indexer -i ${REF} -o ${IDXFILE} --complement emulate -T 8 
 fi
 
-gem-mappability -m ${m} -e ${e} -T 8 -I ${IDXFILE}.gem -l ${l} -o ${WKDIR}/${REFID}_gemmap_l${l}_m${m}_e${e}
+MAPBASE=${WKDIR}/${REFID}_gemmap_l${l}_m${m}_e${e}
+if [ -f "${MAPBASE}.mappability" ]; then
+	echo "${MAPBASE}.mappability exists"
+else
+	echo "Mappability file does not exist, generating"
+	gem-mappability -m ${m} -e ${e} -T 8 -I ${IDXFILE}.gem -l ${l} -o ${MAPBASE}
+fi
+
 
 gem-2-wig -I ${WKDIR}/${REFID}_gemidx.gem \
-	-i ${WKDIR}/${REFID}_gemmap__l${l}_m${m}_e${e}.mappability \
-	-o ${WKDIR}/${REFID}_gemmap__l${l}_m${m}_e${e}
+	-i ${MAPBASE}.mappability \
+	-o ${MAPBASE}
 
-sed 's/ dna//' ${WKDIR}/${REFID}_gemmap__l${l}_m${m}_e${e}.wig > ${WKDIR}/${REFID}_gemmap__l${l}_m${m}_e${e}_nodna.wig
-sed 's/ dna//' ${WKDIR/${REFID}_gemmap__l${l}_m${m}_e${e}.sizes > ${WKDIR}/${REFID}_gemmap__l${l}_m${m}_e${e}_nodna.sizes
+sed 's/ dna//' ${MAPBASE}.wig > ${MAPBASE}_nodna.wig
+sed 's/ dna//' ${MAPBASE}.sizes > ${MAPBASE}_nodna.sizes
 
-${BEDOPS}/wig2bed -m 16G < ${WKDIR}/${REFID}_v37_gemmap__l${l}_m${m}_e${e}_nodna.wig > ${WKDIR}/${REFID}_gemmap__l${l}_m${m}_e${e}.bed
+${BEDOPS}/wig2bed -m 16G < ${WKDIR}/${REFID}_v37_gemmap__l${l}_m${m}_e${e}_nodna.wig > ${MAPBASE}.bed
 
 awk '$5>0.9' ${WKDIR}/${REFID}_gemmap_l250_m2_e1.bed > ${WKDIR}/${REFID}_gemmap_l250_m2_e1_uniq.bed
 
 
 ## Not sure this is necessary
-#/home/justin.zook/GEM_mappability/wigToBigWig ${WKDIR}/${REFID}_gemmap__l${l}_m${m}_e${e}_nodna.wig \
-#	${WKDIR}/${REFID}_gemmap__l${l}_m${m}_e${e}_nodna.sizes \
-#	${WKDIR}/${REFID}_gemmap__l${l}_m${m}_e${e}.bw
+#/home/justin.zook/GEM_mappability/wigToBigWig ${MAPBASE}_nodna.wig \
+#	${MAPBASE}_nodna.sizes \
+#	${MAPBASE}.bw
 
 END_TIME=`date +%s`
 ELAPSED_TIME=`expr $END_TIME - $START_TIME`
