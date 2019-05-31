@@ -18,7 +18,7 @@ START_TIME=`date +%s`
 
 ## Dependencies
 export PATH=$PATH:/oak/stanford/groups/msalit/ndolson/GEM-binaries-Linux-x86_64-core_i3-20130406-045632/bin
-BEDOPS=/oak/stanford/groups/msalit/ndolson/bedops/bin
+export PATH=$PATH:/oak/stanford/groups/msalit/ndolson/bedops/bin
 
 ## Variables
 REF=/oak/stanford/groups/msalit/shared/genomes/hg38/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna
@@ -51,9 +51,9 @@ gem-2-wig -I ${WKDIR}/${REFID}_gemidx.gem \
 sed 's/ dna//' ${MAPBASE}.wig > ${MAPBASE}_nodna.wig
 sed 's/ dna//' ${MAPBASE}.sizes > ${MAPBASE}_nodna.sizes
 
-${BEDOPS}/wig2bed -m 16G < ${WKDIR}/${REFID}_v37_gemmap__l${l}_m${m}_e${e}_nodna.wig > ${MAPBASE}.bed
+wig2bed -m 16G < ${MAPBASE}_nodna.wig > ${MAPBASE}.bed
 
-awk '$5>0.9' ${WKDIR}/${REFID}_gemmap_l250_m2_e1.bed > ${WKDIR}/${REFID}_gemmap_l250_m2_e1_uniq.bed
+awk '$5>0.9' ${MAPBASE}.bed > ${MAPBASE}_uniq.bed
 
 
 ## Not sure this is necessary
