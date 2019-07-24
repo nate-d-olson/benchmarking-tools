@@ -53,8 +53,8 @@ i=0
 for INPUTBED in $@;
 do
 	SORTEDBED=$(sort_bed ${INPUTBED})
-        SORTEDNONUNIQUEBEDS[$i]=$(get_nonunique ${SORTEDBED})
-        i=$(($i+1))
+    SORTEDNONUNIQUEBEDS[$i]=$(get_nonunique ${SORTEDBED})
+    i=$(($i+1))
 done
 
 echo "${SORTEDNONUNIQUEBEDS[@]}"

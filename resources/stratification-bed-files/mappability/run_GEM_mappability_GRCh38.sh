@@ -48,10 +48,11 @@ gem-2-wig -I ${WKDIR}/${REFID}_gemidx.gem \
 	-i ${MAPBASE}.mappability \
 	-o ${MAPBASE}
 
-sed 's/ dna//' ${MAPBASE}.wig > ${MAPBASE}_nodna.wig
-sed 's/ dna//' ${MAPBASE}.sizes > ${MAPBASE}_nodna.sizes
+## Removing additional chromosome name information from fasta - to prevent errors when generating bed file
+sed 's/ AC//' ${MAPBASE}.wig > ${MAPBASE}_name_clean.wig
+sed 's/ AC//' ${MAPBASE}.sizes > ${MAPBASE}_name_clean.sizes
 
-wig2bed -m 16G < ${MAPBASE}_nodna.wig > ${MAPBASE}.bed
+wig2bed -m 16G < ${MAPBASE}_name_clean.wig > ${MAPBASE}.bed
 
 awk '$5>0.9' ${MAPBASE}.bed > ${MAPBASE}_uniq.bed
 
