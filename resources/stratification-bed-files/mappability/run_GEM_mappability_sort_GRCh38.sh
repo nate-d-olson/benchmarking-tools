@@ -39,15 +39,19 @@ function get_nonunique(){
 	BEDBASE=${MAPBED%%_uniq.*}
 	local OUTBED=${BEDBASE}_nonuniq.sort.bed.gz
 
+	## getting low mappability regions and merging
+	## regions within 100bp
 	complementBed -i ${MAPBED} -g ${BEDTOOLSGENOME} | \
+		mergeBed -d 100 -i stdin |
 		bgzip -c > ${OUTBED}
 	echo "${OUTBED}"
 }
 
 
-#Merge all mappability bed files and also find its complement
+#################################################################
+## Merging all mappability bed files and also find its complement
 
-## List of input beds passes as an array
+## List of input beds passed as an array
 
 i=0
 for INPUTBED in $@;
@@ -62,7 +66,7 @@ echo "${SORTEDNONUNIQUEBEDS[@]}"
 ## Merged mappability
 # multiIntersectBed -i ${SORTEDNONUNIQUEBEDS[@]} |\
 multiIntersectBed -i *_nonuniq.sort.bed.gz |\
- 	mergeBed -i stdin |\
+ 	mergeBed -d 100 -i stdin |\
 	bgzip -c > lowmappabilityall.bed.gz
 
 ## Merged compliment
